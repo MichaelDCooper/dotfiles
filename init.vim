@@ -9,7 +9,7 @@ set shiftwidth=4
 set autoindent
 set scrolloff=24
 set ttyfast
-" set guifont=Jetbrains\ Mono
+set guifont=Jetbrains\ Mono
 set spell spelllang=en_us
 set guicursor=i:block
 
@@ -20,6 +20,7 @@ call plug#begin('~/.vim/plugged')
  Plug 'mhinz/vim-startify'
  Plug 'neoclide/coc.nvim', {'branch': 'release'}
  Plug 'NLKNguyen/papercolor-theme'
+ Plug 'morhetz/gruvbox'
  " For fuzzy finding
  Plug 'nvim-lua/popup.nvim'
  Plug 'nvim-lua/plenary.nvim'
@@ -29,4 +30,4 @@ call plug#end()
 
 syntax enable
 set background=dark
-colorscheme PaperColor
+colorscheme GruvBox
