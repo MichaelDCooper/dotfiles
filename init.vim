@@ -13,19 +13,32 @@ set spell spelllang=en_us
 set guicursor=i:block
 
 call plug#begin('~/.vim/plugged')
+" Language Specific
  Plug 'elixir-editors/vim-elixir'
+
+ " Utils
+ Plug 'darrikonn/vim-gofmt', { 'do': ':GoUpdateBinaries' }
  Plug 'scrooloose/nerdtree'
  Plug 'tpope/vim-commentary'
- Plug 'mhinz/vim-startify'
- " Plug 'neoclide/coc.nvim', {'branch': 'release'}
- Plug 'NLKNguyen/papercolor-theme'
- Plug 'morhetz/gruvbox'
+ Plug 'neoclide/coc.nvim', {'branch': 'release'}
  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
  Plug 'junegunn/fzf.vim'
+
+ " Themes
+ Plug 'christianchiarulli/nvcode-color-schemes.vim'
+ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+ Plug 'vim-airline/vim-airline'
+ Plug 'vim-airline/vim-airline-themes'
+ Plug 'vim-airline'
+ Plug 'ryanoasis/vim-devicons'
 call plug#end()
 
-syntax enable
 colorscheme gruvbox
-_init.lua                       coc.nvim                        glow.nvim                       lua                             nvim-treesitter                 vim-commentary                  vim-gofmt
-autoload                        fzf                             init.vim                        nerdtree                        vim-airline                     vim-devicons
-coc-settings.json               fzf.vim                         lightspeed.nvim                 nvcode-color-schemes.vim        vim-airline-themes              vim-elixir
+
+lua require'nvim-treesitter.configs'.setup { highlight = { enable = true }, incremental_selection = { enable = true }, textobjects = { enable = true }}
+
+let mapleader = ","
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-x> :NERDTreeClose<CR>
+
+nnoremap <leader>r :Rg <CR>
