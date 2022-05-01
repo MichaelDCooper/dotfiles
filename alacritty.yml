@@ -34,8 +34,8 @@ font:
     #   - (macOS) Menlo
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
-    family: Menlo
-  size: 17.0
+    family: InconsolataGo Nerd Font Mono
+  size: 18.0
 
 colors:
   primary:
