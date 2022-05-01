@@ -26,3 +26,6 @@ call plug#end()
 
 syntax enable
 colorscheme gruvbox
+_init.lua                       coc.nvim                        glow.nvim                       lua                             nvim-treesitter                 vim-commentary                  vim-gofmt
+autoload                        fzf                             init.vim                        nerdtree                        vim-airline                     vim-devicons
+coc-settings.json               fzf.vim                         lightspeed.nvim                 nvcode-color-schemes.vim        vim-airline-themes              vim-elixir
