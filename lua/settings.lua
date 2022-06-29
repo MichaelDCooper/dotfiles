@@ -3,7 +3,7 @@ local opt = vim.opt
 
 o.relativenumber = true
 o.number = true
-opt.cc = { 90 }
+-- opt.cc = { 90 }
 o.hlsearch = true
 o.tabstop = 4
 o.softtabstop = 4
