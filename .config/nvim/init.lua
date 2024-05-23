@@ -17,10 +17,17 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
     {
-        'projekt0n/github-nvim-theme',
+        'ellisonleao/gruvbox.nvim',
         priority = 1000,
         config = function()
-            vim.cmd([[colorscheme github_dark_default]])
+            require("gruvbox").setup({
+                contrast = "hard",
+                palette_overrides = {
+                    dark0_hard = '#161616',
+                    bright_green = "#A9B665",
+                }
+            })
+            vim.cmd([[colorscheme gruvbox]])
         end
     },
     {
@@ -47,11 +54,9 @@ require('lazy').setup({
         },
         opts = {
             options = {
-                theme = "auto",
-                -- theme = "catppuccin",
+                theme = "gruvbox",
                 globalstatus = true,
                 icons_enabled = true,
-                -- component_separators = { left = "│", right = "│" },
                 component_separators = { left = "|", right = "|" },
                 section_separators = { left = "", right = "" },
                 disabled_filetypes = {
@@ -73,26 +78,15 @@ require('lazy').setup({
                 lualine_b = {
                     "fancy_branch",
                 },
-                -- lualine_c = {
-                -- {
-                --     "filename",
-                --     path = 1, -- 2 for full path
-                --     symbols = {
-                --         modified = "  ",
-                --         -- readonly = "  ",
-                --         -- unnamed = "  ",
-                --     },
-                -- },
-                -- { "fancy_diagnostics", sources = { "nvim_lsp" }, symbols = { error = " ", warn = " ", info = " " } },
-                -- { "fancy_searchcount" },
-                -- },
                 lualine_x = {
                     "fancy_lsp_servers",
-                    "fancy_diff",
                     "progress",
                 },
                 lualine_y = {
-                    { "fancy_filetype", ts_icon = "" },
+                    {
+                        "fancy_filetype",
+                        ts_icon = ""
+                    },
                 },
                 lualine_z = {},
             },
@@ -100,7 +94,7 @@ require('lazy').setup({
                 lualine_a = {},
                 lualine_b = {},
                 lualine_c = { "filename" },
-                -- lualine_x = { "location" },
+                lualine_x = { "location" },
                 lualine_y = {},
                 lualine_z = {},
             },
@@ -112,19 +106,7 @@ require('lazy').setup({
     { 'tpope/vim-vinegar' },
     { 'nvim-lua/plenary.nvim' },
     {
-        'lewis6991/gitsigns.nvim',
-        config = function()
-            require('gitsigns').setup()
-        end
-
-    },
-    {
         "folke/todo-comments.nvim",
-        opts = {
-            -- your configuration comes here
-            -- or leave it empty to use the default settings
-            -- refer to the configuration section below
-        }
     },
     {
         'scalameta/nvim-metals',
@@ -181,14 +163,26 @@ require('lazy').setup({
             })
         end,
     },
-    -- init.lua:
     {
-        'nvim-telescope/telescope.nvim', tag = '0.1.6',
+        'nvim-telescope/telescope.nvim',
+        tag = '0.1.6',
+        config = function()
+            require('telescope').setup {
+                pickers = {
+                    find_files = {
+                        theme = "ivy",
+                    },
+                    live_grep = {
+                        theme = "ivy",
+                    }
+                },
+            }
+        end
+
     },
     { 'theprimeagen/harpoon' },
     { 'williamboman/mason.nvim' },
     { 'williamboman/mason-lspconfig.nvim' },
-    -- LSP Support
     {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v3.x',
@@ -286,6 +280,8 @@ vim.opt.nu = true
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
+vim.opt.autoindent = true
+vim.opt.cindent = true
 vim.opt.expandtab = true
 vim.opt.scrolloff = 20
 vim.opt.wrap = true
@@ -298,6 +294,7 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.showmode = false
 vim.opt.clipboard = 'unnamedplus'
+vim.opt.colorcolumn = "90"
 
 -- ##############
 -- ### Remaps ###
