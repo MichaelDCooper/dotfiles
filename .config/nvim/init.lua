@@ -24,6 +24,7 @@ require('lazy').setup({
                 contrast = "hard",
                 palette_overrides = {
                     dark0_hard = '#161616',
+                    -- dark0_hard = '#000000',
                     bright_green = "#A9B665",
                 }
             })
