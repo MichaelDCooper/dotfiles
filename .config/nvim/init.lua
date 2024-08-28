@@ -1,6 +1,8 @@
 -- ###############
 -- ### Plugins ###
 -- ###############
+vim.api.nvim_command('echo "hi michael"')
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -17,21 +19,18 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
     {
-        'ellisonleao/gruvbox.nvim',
+        "ellisonleao/gruvbox.nvim",
+        lazy = false,
         priority = 1000,
         config = function()
             require("gruvbox").setup({
-                contrast = "hard",
-                palette_overrides = {
-                    dark0_hard = '#161616',
-                    -- dark0_hard = '#000000',
-                    bright_green = "#A9B665",
-                }
+                contrast = "hard", -- can be "hard", "soft" or empty string
             })
             vim.cmd([[colorscheme gruvbox]])
         end
     },
     {
+
         "zbirenbaum/copilot.lua",
         cmd = "Copilot",
         event = "InsertEnter",
@@ -55,7 +54,7 @@ require('lazy').setup({
         },
         opts = {
             options = {
-                theme = "gruvbox",
+                theme = "auto",
                 globalstatus = true,
                 icons_enabled = true,
                 component_separators = { left = "|", right = "|" },
@@ -105,9 +104,14 @@ require('lazy').setup({
     },
     { 'tpope/vim-commentary' },
     { 'tpope/vim-vinegar' },
+    { 'tpope/vim-surround' },
     { 'nvim-lua/plenary.nvim' },
     {
         "folke/todo-comments.nvim",
+        config = function()
+            require('todo-comments').setup {}
+        end
+
     },
     {
         'scalameta/nvim-metals',
@@ -123,20 +127,29 @@ require('lazy').setup({
         end
     },
     {
-        'folke/trouble.nvim',
+        "yetone/avante.nvim",
+        event = "VeryLazy",
         opts = {
-            icons = true,
-            fold_open = "v",      -- icon used for open folds
-            fold_closed = ">",    -- icon used for closed folds
-            indent_lines = false, -- add an indent guide below the fold icons
-            signs = {
-                error = "error",
-                warning = "warn",
-                hint = "hint",
-                information = "info"
+            -- add any opts here
+        },
+        dependencies = {
+            "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+            "stevearc/dressing.nvim",
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+            --- The below is optional, make sure to setup it properly if you have lazy=true
+            {
+                'MeanderingProgrammer/render-markdown.nvim',
+                opts = {
+                    file_types = { "markdown", "Avante" },
+                },
+                ft = { "markdown", "Avante" },
             },
-            use_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
-        }
+        },
+    },
+    {
+        "folke/trouble.nvim",
+        cmd = "Trouble",
     },
     {
         'nvim-treesitter/nvim-treesitter',
@@ -278,6 +291,7 @@ vim.diagnostic.config { virtual_text = false }
 -- ################
 vim.opt.guicursor = ""
 vim.opt.nu = true
+vim.opt.number = true
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
@@ -307,11 +321,11 @@ vim.keymap.set("n", "<leader>ll", "<cmd>set background=light<cr>", { silent = tr
 vim.keymap.set("n", "<leader>dd", "<cmd>set background=dark<cr>", { silent = true, noremap = true })
 
 -- trouble
-vim.keymap.set("n", "<leader>xx", "<cmd>Trouble workspace_diagnostics<cr>", { silent = true, noremap = true })
-vim.keymap.set("n", "<leader>xd", "<cmd>Trouble document_diagnostics<cr>", { silent = true, noremap = true })
-vim.keymap.set("n", "<leader>xl", "<cmd>Trouble loclist<cr>", { silent = true, noremap = true })
-vim.keymap.set("n", "<leader>xq", "<cmd>Trouble quickfix<cr>", { silent = true, noremap = true })
-vim.keymap.set("n", "gR", "<cmd>Trouble lsp_references<cr>", { silent = true, noremap = true })
+vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics<cr>", { silent = true, noremap = true })
+-- vim.keymap.set("n", "<leader>xd", "<cmd>Trouble document_diagnostics<cr>", { silent = true, noremap = true })
+-- vim.keymap.set("n", "<leader>xl", "<cmd>Trouble loclist<cr>", { silent = true, noremap = true })
+-- vim.keymap.set("n", "<leader>xq", "<cmd>Trouble quickfix<cr>", { silent = true, noremap = true })
+-- vim.keymap.set("n", "gR", "<cmd>Trouble lsp_references<cr>", { silent = true, noremap = true })
 
 
 local builtin = require('telescope.builtin')
