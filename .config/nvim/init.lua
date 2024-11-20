@@ -32,21 +32,7 @@ require('lazy').setup({
                     folds = true,
                 },
             })
-        end
-    },
-    {
-        "nyoom-engineering/oxocarbon.nvim"
-    },
-    { 'projekt0n/github-nvim-theme' },
-    { "folke/tokyonight.nvim" },
-    { "rose-pine/neovim",           name = "rose-pine" },
-    { "xiantang/darcula-dark.nvim" },
-    {
-        "navarasu/onedark.nvim",
-        config = function()
-            require("onedark").setup {
-                style = "warmer"
-            }
+            vim.cmd("colorscheme gruvbox")
         end
     },
     {
@@ -178,63 +164,6 @@ require('lazy').setup({
         end
     },
     {
-        "yetone/avante.nvim",
-        event = "VeryLazy",
-        opts = {
-            -- add any opts here
-        },
-        dependencies = {
-            "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-            "stevearc/dressing.nvim",
-            "nvim-lua/plenary.nvim",
-            "MunifTanjim/nui.nvim",
-            {
-                'MeanderingProgrammer/render-markdown.nvim',
-                opts = {
-                    file_types = { "markdown", "Avante" },
-                },
-                ft = { "markdown", "Avante" },
-            },
-        },
-    },
-    {
-        "folke/trouble.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-        cmd = "Trouble",
-        config = function()
-            require("trouble").setup {
-                position = "bottom",
-                height = 10,
-                width = 50,
-                icons = true,
-                mode = "workspace_diagnostics",
-                fold_open = "",
-                fold_closed = "",
-                group = true,
-                padding = true,
-                action_keys = {
-                    close = "q",
-                    cancel = "<esc>",
-                    refresh = "r",
-                    jump = { "<cr>", "<tab>" },
-                    open_split = { "<c-x>" },
-                    open_vsplit = { "<c-v>" },
-                    open_tab = { "<c-t>" },
-                    jump_close = { "o" },
-                    toggle_mode = "m",
-                    toggle_preview = "P",
-                    hover = "K",
-                    preview = "p",
-                    close_folds = { "zM", "zm" },
-                    open_folds = { "zR", "zr" },
-                    toggle_fold = { "zA", "za" },
-                    previous = "k",
-                    next = "j"
-                },
-            }
-        end
-    },
-    {
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
             'nvim-treesitter/nvim-treesitter-textobjects',
@@ -331,21 +260,7 @@ require('lazy').setup({
             require("copilot_cmp").setup()
         end
     },
-    {
-        "folke/which-key.nvim",
-        event = "VeryLazy",
-        init = function()
-            vim.o.timeout = true
-            vim.o.timeoutlen = 300
-        end,
-        opts = {}
-    },
     { "lukas-reineke/lsp-format.nvim", config = true },
-    {
-        "windwp/nvim-autopairs",
-        event = "InsertEnter",
-        config = true
-    },
     {
         "folke/zen-mode.nvim",
         opts = {
@@ -353,61 +268,12 @@ require('lazy').setup({
                 width = 150,
                 options = {
                     number = true,
-                    relativenumber = true,
+                    relativenumber = false,
                 }
             },
         }
     },
 })
-
-local colorschemes = {
-    rp = "rose-pine",
-    tn = "tokyonight-storm",
-    oxo = "oxocarbon",
-    g = "gruvbox",
-    gh = "github_dark_default",
-    darcula = "darcula-dark",
-
-}
-
-local function save_colorscheme(theme)
-    local file = io.open(vim.fn.stdpath("data") .. "/last_colorscheme", "w")
-    if file then
-        file:write(theme)
-        file:close()
-    end
-end
-
-local function load_last_colorscheme()
-    local file = io.open(vim.fn.stdpath("data") .. "/last_colorscheme", "r")
-    if file then
-        local theme = file:read("*all")
-        file:close()
-        return theme
-    end
-    return nil
-end
-
-function SetColorscheme(theme)
-    if colorschemes[theme] then
-        theme = colorschemes[theme]
-    end
-    vim.cmd("colorscheme " .. theme)
-    save_colorscheme(theme)
-end
-
-vim.api.nvim_create_user_command('SetColorscheme', function(opts)
-    SetColorscheme(opts.args)
-end, { nargs = 1 })
-
-
--- Set default colorscheme
-local last_theme = load_last_colorscheme()
-if last_theme then
-    SetColorscheme(last_theme)
-else
-    SetColorscheme("gruvbox")
-end
 
 local lsp_zero = require('lsp-zero')
 lsp_zero.preset("recommended")
@@ -433,7 +299,7 @@ require('lspconfig').lua_ls.setup(lua_opts)
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
-    ensure_installed = { "lua_ls", "rust_analyzer", "tsserver", "pyright" },
+    ensure_installed = { "lua_ls", "rust_analyzer", "pyright" },
     handlers = {
         lsp_zero.default_setup,
     },
@@ -516,14 +382,6 @@ vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("n", "<leader>ll", "<cmd>set background=light<cr>", { silent = true, noremap = true })
 vim.keymap.set("n", "<leader>dd", "<cmd>set background=dark<cr>", { silent = true, noremap = true })
 
--- trouble
-vim.keymap.set("n", "<leader>xx", "<cmd>Trouble<cr>", { silent = true, noremap = true })
-vim.keymap.set("n", "<leader>xw", "<cmd>Trouble workspace_diagnostics<cr>", { silent = true, noremap = true })
-vim.keymap.set("n", "<leader>xd", "<cmd>Trouble document_diagnostics<cr>", { silent = true, noremap = true })
-vim.keymap.set("n", "<leader>xl", "<cmd>Trouble loclist<cr>", { silent = true, noremap = true })
-vim.keymap.set("n", "<leader>xq", "<cmd>Trouble quickfix<cr>", { silent = true, noremap = true })
-vim.keymap.set("n", "gR", "<cmd>Trouble lsp_references<cr>", { silent = true, noremap = true })
-
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>f', builtin.find_files, {})
 vim.keymap.set('n', '<leader>r', builtin.live_grep, {})
@@ -538,18 +396,9 @@ local ui = require("harpoon.ui")
 
 vim.keymap.set("n", "<leader>a", mark.add_file)
 vim.keymap.set("n", "<leader>h", ui.toggle_quick_menu)
-vim.keymap.set("n", "<C-h>", function() ui.nav_file(1) end)
-vim.keymap.set("n", "<C-j>", function() ui.nav_file(2) end)
-vim.keymap.set("n", "<C-k>", function() ui.nav_file(3) end)
-vim.keymap.set("n", "<C-l>", function() ui.nav_file(4) end)
 
 vim.keymap.set("n", "<leader>=", '<cmd>resize +10<cr>')
 vim.keymap.set("n", "<leader>-", '<cmd>resize -10<cr>')
-
--- Toggle inlay hints
-vim.keymap.set('n', '<leader>th', function()
-    vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled(0))
-end, { desc = "Toggle Inlay Hints" })
 
 -- Zen mode
 vim.keymap.set("n", "<leader>zz", function()
