@@ -1,8 +1,6 @@
 -- ###############
 -- ### Plugins ###
 -- ###############
-vim.api.nvim_command('echo "hi michael"')
-
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -24,13 +22,7 @@ require('lazy').setup({
         priority = 1000,
         config = function()
             require("gruvbox").setup({
-                contrast = "hard", -- can be "hard", "soft" or empty string
-                italic = {
-                    strings = true,
-                    comments = true,
-                    operators = false,
-                    folds = true,
-                },
+                contrast = "hard",
             })
             vim.cmd("colorscheme gruvbox")
         end
@@ -59,22 +51,9 @@ require('lazy').setup({
         },
         opts = {
             options = {
-                theme = "auto",
                 globalstatus = true,
-                icons_enabled = true,
                 component_separators = { left = "|", right = "|" },
                 section_separators = { left = "", right = "" },
-                disabled_filetypes = {
-                    statusline = {
-                        "alfa-nvim",
-                        "help",
-                        "neo-tree",
-                        "Trouble",
-                        "spectre_panel",
-                        "toggleterm",
-                    },
-                    winbar = {},
-                },
             },
             sections = {
                 lualine_a = {
@@ -85,65 +64,34 @@ require('lazy').setup({
                     "fancy_diff",
                 },
                 lualine_c = {
-                    "fancy_cwd",
+                    { "fancy_cwd", substitute_home = true }
                 },
                 lualine_x = {
-                    "fancy_lsp_servers",
-                    "fancy_diagnostics",
-                    "fancy_searchcount",
-                    "progress",
+                    { "fancy_macro" },
+                    { "fancy_diagnostics" },
+                    { "fancy_searchcount" },
+                    { "fancy_location" },
                 },
                 lualine_y = {
-                    {
-                        "fancy_filetype",
-                        ts_icon = ""
-                    },
+                    { "fancy_filetype", ts_icon = "" }
                 },
                 lualine_z = {
-                    "fancy_location",
+                    { "fancy_lsp_servers" }
                 },
             },
-            inactive_sections = {
-                lualine_a = {},
-                lualine_b = {},
-                lualine_c = { "filename" },
-                lualine_x = { "location" },
-                lualine_y = {},
-                lualine_z = {},
-            },
-            tabline = {},
-            extensions = { "neo-tree", "lazy", "trouble", "quickfix" },
         }
     },
     { 'tpope/vim-commentary' },
     { 'tpope/vim-vinegar' },
-    { 'tpope/vim-surround' },
     { 'nvim-lua/plenary.nvim' },
     {
         "folke/todo-comments.nvim",
         config = function()
-            require("todo-comments").setup {
-                keywords = {
-                    FIX = {
-                        icon = " ",
-                        color = "error",
-                        alt = { "FIXME", "BUG", "FIXIT", "ISSUE" },
-                    },
-                    TODO = { icon = " ", color = "info" },
-                    HACK = { icon = " ", color = "warning" },
-                    WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
-                    PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
-                    NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
-                    TEST = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
-                },
-            }
+            require("todo-comments").setup {}
         end
     },
     {
         'scalameta/nvim-metals',
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-        },
         config = function()
             local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
             vim.api.nvim_create_autocmd("FileType", {
@@ -152,10 +100,6 @@ require('lazy').setup({
                     require("metals").initialize_or_attach({
                         settings = {
                             showImplicitArguments = true,
-                            excludedPackages = {
-                                "akka.actor.typed.javadsl",
-                                "com.github.swagger.akka.javadsl",
-                            },
                         },
                     })
                 end,
@@ -171,9 +115,7 @@ require('lazy').setup({
         build = ":TSUpdate",
         config = function()
             require('nvim-treesitter.configs').setup({
-                ensure_installed = { 'go', 'gomod', 'lua', 'vimdoc', 'vim', 'bash', 'markdown',
-                    'markdown_inline', 'c', 'rust', 'cpp', 'yaml', 'toml', 'java',
-                },
+                ensure_installed = { 'go', 'gomod', 'lua', 'markdown_inline', 'c', 'rust', 'cpp', 'yaml', 'toml', 'java', },
                 indent = { enable = true },
                 highlight = {
                     enable = true,
@@ -191,7 +133,7 @@ require('lazy').setup({
     },
     {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.6',
+        branch = '0.1.x',
         config = function()
             require('telescope').setup {
                 pickers = {
@@ -207,15 +149,8 @@ require('lazy').setup({
     },
     {
         'theprimeagen/harpoon',
-        dependencies = {
-            'nvim-lua/plenary.nvim'
-        },
         config = function()
-            require("harpoon").setup({
-                menu = {
-                    width = vim.api.nvim_win_get_width(0) - 4,
-                }
-            })
+            require("harpoon").setup({})
         end
     },
     { 'williamboman/mason.nvim' },
@@ -299,7 +234,6 @@ require('lspconfig').lua_ls.setup(lua_opts)
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
-    ensure_installed = { "lua_ls", "rust_analyzer", "pyright" },
     handlers = {
         lsp_zero.default_setup,
     },
@@ -328,7 +262,7 @@ cmp.setup({
 })
 
 vim.diagnostic.config {
-    virtual_text = false,
+    virtual_text = true,
     signs = true,
     update_in_insert = true,
     underline = true,
@@ -348,7 +282,6 @@ vim.diagnostic.config {
 -- ################
 vim.opt.guicursor = ""
 vim.opt.number = true
-vim.opt.relativenumber = false
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
@@ -405,7 +338,6 @@ vim.keymap.set("n", "<leader>zz", function()
     require("zen-mode").toggle()
     vim.wo.wrap = false
 end)
-
 
 -- LSP
 vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, { noremap = true, silent = true })
