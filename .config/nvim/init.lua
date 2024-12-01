@@ -258,6 +258,11 @@ end)
 
 local lua_opts = lsp_zero.nvim_lua_ls()
 require('lspconfig').lua_ls.setup(lua_opts)
+require 'lspconfig'.clangd.setup {
+    cmd = { "clangd" },
+    filetypes = { "c", "cpp", "objc", "objcpp" },
+    root_dir = function() return vim.loop.cwd() end -- Treats each directory as a project root
+}
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
@@ -333,6 +338,15 @@ vim.opt.splitright = true
 vim.opt.undofile = true
 vim.opt.swapfile = false
 
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "cpp", "c", "cc", "h", "hpp" },
+    callback = function()
+        vim.opt_local.shiftwidth = 2
+        vim.opt_local.tabstop = 2
+        vim.opt_local.softtabstop = 2
+    end
+})
+
 -- ##############
 -- ### Remaps ###
 -- ##############
@@ -371,3 +385,4 @@ vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, { noremap = true, silent =
 
 -- Avante
 vim.keymap.set('n', '<leader>aa', '<cmd>AvanteToggle<CR>', { noremap = true, silent = true })
+vim.keymap.set('v', '<leader>aa', '<cmd>AvanteAsk<CR>', { noremap = true, silent = true })
