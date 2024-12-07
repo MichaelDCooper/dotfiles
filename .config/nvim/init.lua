@@ -17,16 +17,35 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
     {
-        "ellisonleao/gruvbox.nvim",
-        lazy = false,
-        priority = 1000,
+        "folke/tokyonight.nvim",
+        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+        priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
-            require("gruvbox").setup({
-                contrast = "hard",
-            })
-            vim.cmd("colorscheme gruvbox")
+            vim.cmd [[colorscheme tokyonight-storm]]
         end
     },
+    -- {
+
+    --     "catppuccin/nvim",
+    --     name = "catppuccin",
+    --     lazy = false,
+    --     priority = 1000,
+    --     config = function()
+    --         -- require("gruvbox").setup({
+    --         --     contrast = "hard",
+    --         -- })
+    --         vim.cmd("colorscheme catppuccin-mocha")
+    --     end
+    --     -- "ellisonleao/gruvbox.nvim",
+    --     -- lazy = false,
+    --     -- priority = 1000,
+    --     -- config = function()
+    --     --     require("gruvbox").setup({
+    --     --         contrast = "hard",
+    --     --     })
+    --     --     vim.cmd("colorscheme gruvbox")
+    --     -- end
+    -- },
     {
         "zbirenbaum/copilot.lua",
         cmd = "Copilot",
@@ -47,13 +66,12 @@ require('lazy').setup({
         "yetone/avante.nvim",
         event = "VeryLazy",
         lazy = false,
-        version = false, -- set this if you want to always pull the latest change
+        version = false,
         opts = {
             provider = "copilot",
             auto_suggestions_provider = "copilot",
             -- add any opts here
         },
-        -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
         build = "make",
         dependencies = {
             "stevearc/dressing.nvim",
@@ -117,6 +135,79 @@ require('lazy').setup({
             require("todo-comments").setup {}
         end
     },
+    -- {
+    --     "mfussenegger/nvim-jdtls",
+    --     ft = { "java" },
+    --     config = function()
+    --         local on_attach = function(client, bufnr)
+    --             local function buf_set_keymap(...)
+    --                 vim.api.nvim_buf_set_keymap(bufnr, ...)
+    --             end
+    --             local function buf_set_option(...)
+    --                 vim.api.nvim_buf_set_option(bufnr, ...)
+    --             end
+
+    --             buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
+    --             local opts = { noremap = true, silent = true }
+
+    --             require('jdtls').setup_dap({ hotcodereplace = 'auto' })
+    --             require('jdtls.dap').setup_dap_main_class_configs()
+
+    --             -- Follows lsp maps defined below
+    --             buf_set_keymap("n", "<leader>K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
+    --             buf_set_keymap("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
+    --             buf_set_keymap("n", "gs", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
+    --             buf_set_keymap("n", "<leader>D", "<cmd>Telescope lsp_type_definitions<CR>", opts)
+    --             buf_set_keymap("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
+    --             buf_set_keymap("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
+    --             buf_set_keymap("n", "gr", "<cmd>Telescope lsp_references<CR>", opts)
+    --             buf_set_keymap("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opts)
+    --             buf_set_keymap("n", "[n", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
+    --             buf_set_keymap("n", "]n", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
+    --             client.server_capabilities.document_formatting = true
+    --         end
+    --         local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    --         local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
+    --         local java_debug_path = vim.fn.glob(
+    --             vim.fn.stdpath("data") ..
+    --             "/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar", 1)
+    --         local config = {
+    --             cmd = {
+    --                 "java",
+    --                 "-Declipse.application=org.eclipse.jdt.ls.core.id1",
+    --                 "-Dosgi.bundles.defaultStartLevel=4",
+    --                 "-Declipse.product=org.eclipse.jdt.ls.core.product",
+    --                 "-Dlog.protocol=true",
+    --                 "-Dlog.level=ALL",
+    --                 "-Xmx1g",
+    --                 "--add-modules=ALL-SYSTEM",
+    --                 "--add-opens",
+    --                 "java.base/java.util=ALL-UNNAMED",
+    --                 "--add-opens",
+    --                 "java.base/java.lang=ALL-UNNAMED",
+    --                 "-jar",
+    --                 vim.fn.expand(
+    --                     "~/.local/share/nvim/mason/packages/jdtls/plugins/org.eclipse.equinox.launcher_1.6.900.v20240613-2009.jar"
+    --                 ),
+    --                 "-configuration",
+    --                 vim.fn.expand("~/.local/share/nvim/mason/packages/jdtls/config_mac"),
+    --                 "-data",
+    --                 vim.fn.expand("~/.cache/jdtls/workspace") .. project_name,
+    --             },
+    --             init_options = {
+    --                 bundles = {
+    --                     java_debug_path
+    --                 }
+    --             },
+
+    --             root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" }),
+
+    --             capabilities = capabilities,
+    --             on_attach = on_attach,
+    --         }
+    --         require("jdtls").start_or_attach(config)
+    --     end,
+    -- },
     {
         'scalameta/nvim-metals',
         config = function()
@@ -235,6 +326,82 @@ require('lazy').setup({
             },
         }
     },
+    -- {
+    --     "mfussenegger/nvim-dap",
+    --     dependencies = {
+    --         "leoluz/nvim-dap-go",
+    --         "mfussenegger/nvim-dap-python",
+    --         "rcarriga/nvim-dap-ui",
+    --         "theHamsta/nvim-dap-virtual-text",
+    --         "nvim-neotest/nvim-nio",
+    --     },
+    --     config = function()
+    --         local dap = require("dap")
+    --         local ui = require("dapui")
+    --         require("dap-go").setup()
+    --         require("dapui").setup()
+    --         require("nvim-dap-virtual-text").setup()
+    --         vim.keymap.set("n", "<space>b", dap.toggle_breakpoint)
+    --         vim.keymap.set("n", "<space>gb", dap.run_to_cursor)
+
+    --         -- Eval var under cursor
+    --         vim.keymap.set("n", "<space>?", function()
+    --             require("dapui").eval(nil, { enter = true })
+    --         end)
+
+    --         -- Java Config
+    --         dap.configurations.java = {
+    --             {
+    --                 type = 'java',
+    --                 request = 'attach',
+    --                 name = "Debug (Attach) - Remote",
+    --                 hostName = "127.0.0.1",
+    --                 port = 5005,
+    --             },
+    --             {
+    --                 type = 'java',
+    --                 request = 'launch',
+    --                 name = "Debug (Launch) - Current File",
+    --                 mainClass = "${file}",
+    --                 projectName = "${workspaceFolder}",
+    --                 args = {},
+    --                 vmArgs = {
+    --                     "-XX:+ShowCodeDetailsInExceptionMessages",
+    --                 },
+    --             },
+    --             {
+    --                 type = "java",
+    --                 request = "launch",
+    --                 name = "Debug (Launch) with Arguments Prompt",
+    --                 mainClass = "${file}",
+    --                 projectName = "${workspaceFolder}",
+    --                 args = function()
+    --                     local args_string = vim.fn.input('Arguments: ')
+    --                     return vim.split(args_string, " ", true)
+    --                 end,
+    --                 vmArgs = {
+    --                     "-XX:+ShowCodeDetailsInExceptionMessages",
+    --                 },
+    --             }
+    --         }
+
+    --         require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
+
+
+    --         dap.listeners.before.attach.dapui_config = function()
+    --             ui.open()
+    --         end
+    --         dap.listeners.before.launch.dapui_config = function()
+    --             ui.open()
+    --         end
+    --         dap.listeners.before.event_terminated.dapui_config = function()
+    --             ui.close()
+    --         end
+    --         dap.listeners.before.event_exited.dapui_config = function()
+    --             ui.close()
+    --         end
+    --     end
+    -- },
 })
 
 local lsp_zero = require('lsp-zero')
@@ -261,13 +428,14 @@ require('lspconfig').lua_ls.setup(lua_opts)
 require 'lspconfig'.clangd.setup {
     cmd = { "clangd" },
     filetypes = { "c", "cpp", "objc", "objcpp" },
-    root_dir = function() return vim.loop.cwd() end -- Treats each directory as a project root
+    root_dir = function() return vim.loop.cwd() end
 }
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
     handlers = {
         lsp_zero.default_setup,
+        -- ["jdtls"] = function() end,
     },
 })
 
@@ -359,7 +527,6 @@ vim.keymap.set("n", "<leader>dd", "<cmd>set background=dark<cr>", { silent = tru
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>f', builtin.find_files, {})
 vim.keymap.set('n', '<leader>r', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>b', builtin.buffers, {})
 
 -- clear copy buffer
 vim.keymap.set('n', '<leader>dp', "<cmd>dp+<CR>", { silent = true })
@@ -386,3 +553,8 @@ vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, { noremap = true, silent =
 -- Avante
 vim.keymap.set('n', '<leader>aa', '<cmd>AvanteToggle<CR>', { noremap = true, silent = true })
 vim.keymap.set('v', '<leader>aa', '<cmd>AvanteAsk<CR>', { noremap = true, silent = true })
+
+-- -- DAP
+-- vim.keymap.set("n", "<leader>dc", '<cmd>DapContinue<CR>', { noremap = true, silent = true })
+-- vim.keymap.set("n", "<leader>ds", '<cmd>DapStepInto<CR>', { noremap = true, silent = true })
+-- vim.keymap.set("n", "<leader>dr", '<cmd>DapRestart<CR>', { noremap = true, silent = true })
