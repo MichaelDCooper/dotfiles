@@ -17,35 +17,16 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
     {
-        "folke/tokyonight.nvim",
-        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-        priority = 1000, -- make sure to load this before all the other start plugins
+        "ellisonleao/gruvbox.nvim",
+        lazy = false,
+        priority = 1000,
         config = function()
-            vim.cmd [[colorscheme tokyonight-storm]]
+            require("gruvbox").setup({
+                contrast = "hard",
+            })
+            vim.cmd("colorscheme gruvbox")
         end
     },
-    -- {
-
-    --     "catppuccin/nvim",
-    --     name = "catppuccin",
-    --     lazy = false,
-    --     priority = 1000,
-    --     config = function()
-    --         -- require("gruvbox").setup({
-    --         --     contrast = "hard",
-    --         -- })
-    --         vim.cmd("colorscheme catppuccin-mocha")
-    --     end
-    --     -- "ellisonleao/gruvbox.nvim",
-    --     -- lazy = false,
-    --     -- priority = 1000,
-    --     -- config = function()
-    --     --     require("gruvbox").setup({
-    --     --         contrast = "hard",
-    --     --     })
-    --     --     vim.cmd("colorscheme gruvbox")
-    --     -- end
-    -- },
     {
         "zbirenbaum/copilot.lua",
         cmd = "Copilot",
