@@ -50,8 +50,7 @@ require('lazy').setup({
         version = false,
         opts = {
             provider = "copilot",
-            auto_suggestions_provider = "copilot",
-            -- add any opts here
+            -- auto_suggestions_provider = "copilot",
         },
         build = "make",
         dependencies = {
@@ -307,82 +306,6 @@ require('lazy').setup({
             },
         }
     },
-    -- {
-    --     "mfussenegger/nvim-dap",
-    --     dependencies = {
-    --         "leoluz/nvim-dap-go",
-    --         "mfussenegger/nvim-dap-python",
-    --         "rcarriga/nvim-dap-ui",
-    --         "theHamsta/nvim-dap-virtual-text",
-    --         "nvim-neotest/nvim-nio",
-    --     },
-    --     config = function()
-    --         local dap = require("dap")
-    --         local ui = require("dapui")
-    --         require("dap-go").setup()
-    --         require("dapui").setup()
-    --         require("nvim-dap-virtual-text").setup()
-    --         vim.keymap.set("n", "<space>b", dap.toggle_breakpoint)
-    --         vim.keymap.set("n", "<space>gb", dap.run_to_cursor)
-
-    --         -- Eval var under cursor
-    --         vim.keymap.set("n", "<space>?", function()
-    --             require("dapui").eval(nil, { enter = true })
-    --         end)
-
-    --         -- Java Config
-    --         dap.configurations.java = {
-    --             {
-    --                 type = 'java',
-    --                 request = 'attach',
-    --                 name = "Debug (Attach) - Remote",
-    --                 hostName = "127.0.0.1",
-    --                 port = 5005,
-    --             },
-    --             {
-    --                 type = 'java',
-    --                 request = 'launch',
-    --                 name = "Debug (Launch) - Current File",
-    --                 mainClass = "${file}",
-    --                 projectName = "${workspaceFolder}",
-    --                 args = {},
-    --                 vmArgs = {
-    --                     "-XX:+ShowCodeDetailsInExceptionMessages",
-    --                 },
-    --             },
-    --             {
-    --                 type = "java",
-    --                 request = "launch",
-    --                 name = "Debug (Launch) with Arguments Prompt",
-    --                 mainClass = "${file}",
-    --                 projectName = "${workspaceFolder}",
-    --                 args = function()
-    --                     local args_string = vim.fn.input('Arguments: ')
-    --                     return vim.split(args_string, " ", true)
-    --                 end,
-    --                 vmArgs = {
-    --                     "-XX:+ShowCodeDetailsInExceptionMessages",
-    --                 },
-    --             }
-    --         }
-
-    --         require('dap-python').setup('~/.virtualenvs/debugpy/bin/python')
-
-
-    --         dap.listeners.before.attach.dapui_config = function()
-    --             ui.open()
-    --         end
-    --         dap.listeners.before.launch.dapui_config = function()
-    --             ui.open()
-    --         end
-    --         dap.listeners.before.event_terminated.dapui_config = function()
-    --             ui.close()
-    --         end
-    --         dap.listeners.before.event_exited.dapui_config = function()
-    --             ui.close()
-    --         end
-    --     end
-    -- },
 })
 
 local lsp_zero = require('lsp-zero')
@@ -534,8 +457,3 @@ vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format, { noremap = true, silent =
 -- Avante
 vim.keymap.set('n', '<leader>aa', '<cmd>AvanteToggle<CR>', { noremap = true, silent = true })
 vim.keymap.set('v', '<leader>aa', '<cmd>AvanteAsk<CR>', { noremap = true, silent = true })
-
--- -- DAP
--- vim.keymap.set("n", "<leader>dc", '<cmd>DapContinue<CR>', { noremap = true, silent = true })
--- vim.keymap.set("n", "<leader>ds", '<cmd>DapStepInto<CR>', { noremap = true, silent = true })
--- vim.keymap.set("n", "<leader>dr", '<cmd>DapRestart<CR>', { noremap = true, silent = true })
