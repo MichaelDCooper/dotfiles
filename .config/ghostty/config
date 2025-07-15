@@ -1,16 +1,10 @@
-# GHOSTTY TERMINAL PROTOCOLS
-# LAST INSPECTION: 2025-01-16
-
-# SYSTEM 
 macos-option-as-alt = true
 window-inherit-font-size = true
 
-# CURSOR CONFIGURATION
 cursor-style-blink = false
 cursor-style = block
 cursor-color = #989898 
 
-# TYPOGRAPHY
 font-family = TX-02
 font-size = 14
 
