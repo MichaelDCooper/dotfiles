@@ -8,5 +8,6 @@ cursor-color = #989898
 font-family = TX-02
 font-size = 14
 
-theme = ayu
+theme = Gruvbox Dark Hard
 
+keybind = shift+enter=text:\x1b\r

@@ -16,16 +16,14 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
     -- Colorscheme
     {
-        "Shatur/neovim-ayu",
+        "ellisonleao/gruvbox.nvim",
         lazy = false,
         priority = 1000,
         config = function()
-            require('ayu').setup({
-                mirage = true,   -- Set to `true` to use `mirage` variant instead of `dark` for dark background.
-                terminal = true, -- Set to `false` to let terminal manage its own colors.
-                overrides = {},  -- A dictionary of group names, each associated with a dictionary of parameters (`bg`, `fg`, `sp` and `style`) and colors in hex.
+            require('gruvbox').setup({
+                contrast = "hard"
             })
-            vim.cmd("colorscheme ayu")
+            vim.cmd("colorscheme gruvbox")
         end
     },
     {
@@ -49,7 +47,8 @@ require('lazy').setup({
                     "fancy_diff",
                 },
                 lualine_c = {
-                    { "fancy_cwd", substitute_home = true }
+                    { "fancy_cwd", substitute_home = true },
+                    { "filename", path = 1 }
                 },
                 lualine_x = {
                     { "fancy_macro" },
@@ -137,8 +136,9 @@ require('lazy').setup({
             local cmp = require('cmp')
             cmp.setup({
                 sources = {
-                    { name = "copilot",  group_index = 2 },
-                    { name = 'nvim_lsp', group_index = 2 },
+                    -- Prioritize LSP over Copilot (lower group_index = higher priority)
+                    { name = 'nvim_lsp', group_index = 1, priority = 100 },
+                    { name = "copilot",  group_index = 2, priority = 50 },
                 },
                 mapping = {
                     ['<C-Space>'] = cmp.mapping.complete(),
@@ -165,15 +165,61 @@ require('lazy').setup({
                 },
                 formatting = {
                     format = function(entry, vim_item)
-                        -- Add source name for clarity
+                        -- Show more detailed information for LSP items
+                        local kind_icons = {
+                            Text = "󰉿",
+                            Method = "󰆧",
+                            Function = "󰊕",
+                            Constructor = "",
+                            Field = "󰜢",
+                            Variable = "󰀫",
+                            Class = "󰠱",
+                            Interface = "",
+                            Module = "",
+                            Property = "󰜢",
+                            Unit = "󰑭",
+                            Value = "󰎠",
+                            Enum = "",
+                            Keyword = "󰌋",
+                            Snippet = "",
+                            Color = "󰏘",
+                            File = "󰈙",
+                            Reference = "󰈇",
+                            Folder = "󰉋",
+                            EnumMember = "",
+                            Constant = "󰏿",
+                            Struct = "󰙅",
+                            Event = "",
+                            Operator = "󰆕",
+                            TypeParameter = ""
+                        }
+
+                        -- Add kind icon
+                        vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind] or "", vim_item.kind)
+
+                        -- Add source name
                         vim_item.menu = ({
                             copilot = "[Copilot]",
                             nvim_lsp = "[LSP]",
                         })[entry.source.name]
+
                         return vim_item
                     end
                 },
                 experimental = { ghost_text = false },
+            })
+
+            -- Enhanced completion for JVM languages
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = { "java", "scala" },
+                callback = function()
+                    cmp.setup.buffer({
+                        sources = {
+                            { name = 'nvim_lsp', group_index = 1, priority = 1000 },
+                            { name = "copilot",  group_index = 3, priority = 1 },
+                        },
+                    })
+                end,
             })
         end
     },
@@ -268,9 +314,6 @@ vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon
 
 
 -- LSP SETUP
-require('java').setup()
-require('lspconfig').jdtls.setup({})
-
 local lspconfig = require('lspconfig')
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
@@ -295,6 +338,78 @@ local on_attach = function(client, bufnr)
     vim.keymap.set('n', '[n', vim.diagnostic.goto_prev, opts)
     vim.keymap.set('n', ']n', vim.diagnostic.goto_next, opts)
 end
+
+-- Java setup with nvim-java
+require('java').setup({
+    jdk = {
+        auto_install = false,
+    },
+})
+
+-- Enhanced jdtls configuration
+local function get_jdtls_config()
+    local jdtls = require('lspconfig').jdtls
+    local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
+    local workspace_dir = vim.fn.stdpath('data') .. '/jdtls-workspace/' .. project_name
+
+    return {
+        capabilities = capabilities,
+        on_attach = on_attach,
+        cmd = {
+            'jdtls',
+            '-Xmx2G',  -- Increase heap size for better performance
+            '--jvm-arg=-Xms512m',
+            '-data', workspace_dir,
+        },
+        root_dir = jdtls.document_config.default_config.root_dir,
+        settings = {
+            java = {
+                signatureHelp = { enabled = true },
+                contentProvider = { preferred = 'fernflower' },
+                completion = {
+                    favoriteStaticMembers = {
+                        "org.junit.jupiter.api.Assertions.*",
+                        "org.junit.Assert.*",
+                        "org.mockito.Mockito.*",
+                    },
+                    filteredTypes = {
+                        "com.sun.*",
+                        "io.micrometer.shaded.*",
+                    },
+                },
+                sources = {
+                    organizeImports = {
+                        starThreshold = 9999,
+                        staticStarThreshold = 9999,
+                    },
+                },
+                codeGeneration = {
+                    toString = {
+                        template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+                    },
+                    useBlocks = true,
+                },
+                configuration = {
+                    runtimes = {},
+                },
+                import = {
+                    gradle = {
+                        enabled = true,
+                    },
+                    maven = {
+                        enabled = true,
+                    },
+                },
+            },
+        },
+        init_options = {
+            bundles = {},
+        },
+    }
+end
+
+-- Setup jdtls with enhanced config
+require('lspconfig').jdtls.setup(get_jdtls_config())
 
 -- Mason setup with handlers to prevent double attachment
 require('mason').setup()
@@ -367,13 +482,45 @@ lspconfig.clangd.setup({
 })
 
 
+-- Enhanced Metals configuration for Scala
+local metals_config = require("metals").bare_config()
+metals_config.capabilities = capabilities
+metals_config.on_attach = function(client, bufnr)
+    on_attach(client, bufnr)
+
+    -- Metals-specific commands
+    vim.keymap.set("n", "<leader>mc", function()
+        require("metals").commands()
+    end, { buffer = bufnr, desc = "Metals commands" })
+
+    vim.keymap.set("n", "<leader>mi", function()
+        require("metals").import_build()
+    end, { buffer = bufnr, desc = "Metals import build" })
+end
+
+metals_config.settings = {
+    showImplicitArguments = true,
+    showImplicitConversionsAndClasses = true,
+    showInferredType = true,
+    superMethodLensesEnabled = true,
+    enableSemanticHighlighting = false,
+
+    -- Performance settings
+    bloopSbtAlreadyInstalled = true,
+
+    -- Auto-import settings
+    excludedPackages = {
+        "akka.actor.typed.javadsl",
+        "com.github.swagger.akka.javadsl",
+    },
+}
+
+metals_config.init_options.statusBarProvider = "on"
+
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "scala", "sbt" },
+    pattern = { "scala", "sbt", "java" },
     callback = function()
-        require("metals").initialize_or_attach({
-            capabilities = capabilities,
-            on_attach = on_attach,
-        })
+        require("metals").initialize_or_attach(metals_config)
     end,
 })
 
