@@ -14,7 +14,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
-    -- Colorscheme
     {
         "ellisonleao/gruvbox.nvim",
         lazy = false,
@@ -48,7 +47,7 @@ require('lazy').setup({
                 },
                 lualine_c = {
                     { "fancy_cwd", substitute_home = true },
-                    { "filename", path = 1 }
+                    { "filename",  path = 1 }
                 },
                 lualine_x = {
                     { "fancy_macro" },
@@ -65,18 +64,7 @@ require('lazy').setup({
             },
         }
     },
-    -- Copilot for completion menu
-    -- Copilot CMP source
-    {
-        "zbirenbaum/copilot-cmp",
-        config = function()
-            require("copilot_cmp").setup()
-        end,
-        dependencies = { "zbirenbaum/copilot.lua" },
-    },
-    -- Testing java lsp
     { 'nvim-java/nvim-java' },
-    -- Essential tools only
     { 'tpope/vim-commentary' },
     { 'tpope/vim-vinegar' },
     {
@@ -88,7 +76,7 @@ require('lazy').setup({
                     prompt_prefix = "❯ ",
                     selection_caret = "❯ ",
                     file_ignore_patterns = {
-                        "node_modules", ".git/", "target/", "*.class", ".metals/", ".bloop/"
+                        "node_modules", ".git/", "target/", "*.class", ".bloop/"
                     },
                     layout_config = {
                         horizontal = { preview_width = 0.55 },
@@ -118,14 +106,11 @@ require('lazy').setup({
             })
         end
     },
-    -- LSP stack
     { 'mason-org/mason.nvim',              version = "^1.0.0" },
     { 'mason-org/mason-lspconfig.nvim',    version = "^1.0.0" },
     { 'williamboman/mason-lspconfig.nvim', version = "^1.0.0" },
     { 'neovim/nvim-lspconfig' },
     { "lukas-reineke/lsp-format.nvim",     config = true },
-
-    -- Minimal completion - Copilot + LSP only
     {
         'hrsh7th/nvim-cmp',
         event = "InsertEnter",
@@ -136,9 +121,7 @@ require('lazy').setup({
             local cmp = require('cmp')
             cmp.setup({
                 sources = {
-                    -- Prioritize LSP over Copilot (lower group_index = higher priority)
                     { name = 'nvim_lsp', group_index = 1, priority = 100 },
-                    { name = "copilot",  group_index = 2, priority = 50 },
                 },
                 mapping = {
                     ['<C-Space>'] = cmp.mapping.complete(),
@@ -193,37 +176,26 @@ require('lazy').setup({
                             Operator = "󰆕",
                             TypeParameter = ""
                         }
-
-                        -- Add kind icon
                         vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind] or "", vim_item.kind)
-
-                        -- Add source name
-                        vim_item.menu = ({
-                            copilot = "[Copilot]",
-                            nvim_lsp = "[LSP]",
-                        })[entry.source.name]
-
+                            [entry.source.name]
                         return vim_item
                     end
                 },
                 experimental = { ghost_text = false },
             })
 
-            -- Enhanced completion for JVM languages
             vim.api.nvim_create_autocmd("FileType", {
                 pattern = { "java", "scala" },
                 callback = function()
                     cmp.setup.buffer({
                         sources = {
                             { name = 'nvim_lsp', group_index = 1, priority = 1000 },
-                            { name = "copilot",  group_index = 3, priority = 1 },
                         },
                     })
                 end,
             })
         end
     },
-
     -- Treesitter for syntax
     {
         'nvim-treesitter/nvim-treesitter',
@@ -243,11 +215,6 @@ require('lazy').setup({
         version = '^5',
         lazy = false,
         ft = { "rust" },
-    },
-    {
-        'scalameta/nvim-metals',
-        ft = { "scala", "sbt" },
-        dependencies = { "nvim-lua/plenary.nvim" },
     },
 })
 
@@ -357,7 +324,7 @@ local function get_jdtls_config()
         on_attach = on_attach,
         cmd = {
             'jdtls',
-            '-Xmx2G',  -- Increase heap size for better performance
+            '-Xmx2G', -- Increase heap size for better performance
             '--jvm-arg=-Xms512m',
             '-data', workspace_dir,
         },
@@ -481,54 +448,6 @@ lspconfig.clangd.setup({
     on_attach = on_attach,
 })
 
-
--- Enhanced Metals configuration for Scala
-local metals_config = require("metals").bare_config()
-metals_config.capabilities = capabilities
-metals_config.on_attach = function(client, bufnr)
-    on_attach(client, bufnr)
-
-    -- Metals-specific commands
-    vim.keymap.set("n", "<leader>mc", function()
-        require("metals").commands()
-    end, { buffer = bufnr, desc = "Metals commands" })
-
-    vim.keymap.set("n", "<leader>mi", function()
-        require("metals").import_build()
-    end, { buffer = bufnr, desc = "Metals import build" })
-end
-
-metals_config.settings = {
-    showImplicitArguments = true,
-    showImplicitConversionsAndClasses = true,
-    showInferredType = true,
-    superMethodLensesEnabled = true,
-    enableSemanticHighlighting = false,
-
-    -- Performance settings
-    bloopSbtAlreadyInstalled = true,
-
-    -- Auto-import settings
-    excludedPackages = {
-        "akka.actor.typed.javadsl",
-        "com.github.swagger.akka.javadsl",
-    },
-}
-
-metals_config.init_options.statusBarProvider = "on"
-
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "scala", "sbt", "java" },
-    callback = function()
-        require("metals").initialize_or_attach(metals_config)
-    end,
-})
-
--- ####################
--- ### Diagnostics ###
--- ####################
-
--- Clean diagnostic signs (modern API)
 vim.diagnostic.config({
     virtual_text = false,
     signs = {
