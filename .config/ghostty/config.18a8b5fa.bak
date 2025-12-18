@@ -1,0 +1,12 @@
+macos-option-as-alt = true
+window-inherit-font-size = true
+
+cursor-style-blink = false
+cursor-style = block
+cursor-color = #989898 
+
+font-family = TX-02
+font-size = 14
+
+theme = Gruvbox Dark Hard
+
