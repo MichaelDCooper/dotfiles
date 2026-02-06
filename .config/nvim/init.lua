@@ -73,6 +73,7 @@ require('lazy').setup({
     },
     { 'mason-org/mason.nvim',           version = "^1.0.0" },
     { 'mason-org/mason-lspconfig.nvim', version = "^1.0.0" },
+    { 'mfussenegger/nvim-jdtls' }, --Java needs its own
     { 'neovim/nvim-lspconfig' },
     { "lukas-reineke/lsp-format.nvim",  config = true },
     {
@@ -206,6 +207,40 @@ require('mason-lspconfig').setup({
             }
 
             lspconfig[server_name].setup(config)
+        end,
+        ['jdtls'] = function()
+            vim.api.nvim_create_autocmd('FileType', {
+                pattern = 'java',
+                callback = function()
+                    local root_dir = vim.fs.dirname(vim.fs.find({ 'pom.xml', 'gradlew', '.git' }, { upward = true })[1])
+                    local project_name = vim.fn.fnamemodify(root_dir, ':p:h:t')
+
+                    require('jdtls').start_or_attach({
+                        cmd = {
+                            vim.fn.expand('~/.local/share/nvim/mason/bin/jdtls'),
+                            '-data', vim.fn.expand('~/.cache/jdtls-workspace/') .. project_name,
+                        },
+                        root_dir = root_dir,
+                        capabilities = capabilities,
+                        on_attach = function(client, bufnr)
+                            client.server_capabilities.documentFormattingProvider = false
+                            on_attach(client, bufnr)
+                        end,
+                        settings = {
+                            java = {
+                                signatureHelp = { enabled = true },
+                                contentProvider = { preferred = 'fernflower' },
+                                sources = {
+                                    organizeImports = {
+                                        starThreshold = 9999,
+                                        staticStarThreshold = 9999,
+                                    },
+                                },
+                            },
+                        },
+                    })
+                end,
+            })
         end,
         ['lua_ls'] = function()
             lspconfig.lua_ls.setup({
